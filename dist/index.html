@@ -1,112 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Futuristic Disk Scheduler</title>
-    <!-- Fonts: Orbitron for headers, Rajdhani for UI text -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="/assets/index-C8VAeXyI.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DgHpsRiC.css">
-  </head>
-  <body>
-    <div id="app">
-      <header class="cyber-header">
-        <h1 class="glitch" data-text="DISK SCHEDULER // PROTOCOL">DISK SCHEDULER // PROTOCOL</h1>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Futuristic Disk Scheduler</title>
+  <!-- Fonts: Orbitron for headers, Rajdhani for UI text -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <script type="module" crossorigin src="/assets/index-Cgcnt8z-.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-ByTmDdOD.css">
+</head>
+
+<body>
+  <div id="app">
+    <header class="cyber-header">
+      <h1 class="glitch" data-text="DISK SCHEDULER // PROTOCOL">DISK SCHEDULER // PROTOCOL</h1>
+      <div class="header-controls">
+        <button id="btn-info" class="cyber-mini-btn" title=" educational mode">ℹ INFO</button>
         <div class="status-indicator">
           <span class="status-dot"></span> SYSTEM ONLINE
         </div>
-      </header>
-
-      <main class="main-interface">
-        <aside class="control-panel glass-panel">
-          <h2>// CONTROL MATRIX</h2>
-          
-          <div class="control-group">
-            <label>ALGORITHM</label>
-            <select id="algo-select" class="cyber-select">
-              <option value="FCFS">FCFS // FIRST-COME</option>
-              <option value="SSTF">SSTF // SHORTEST-SEEK</option>
-              <option value="SCAN">SCAN // ELEVATOR</option>
-              <option value="LOOK">LOOK // ADAPTIVE</option>
-              <option value="CSCAN">C-SCAN // CIRCULAR</option>
-              <option value="CLOOK">C-LOOK // ADPT-CIRC</option>
-            </select>
-          </div>
-
-          <div class="control-group">
-            <label>REQUEST QUEUE</label>
-            <div class="input-wrapper">
-              <input type="text" id="request-input" class="cyber-input" value="98, 183, 37, 122, 14, 124, 65, 67" />
-              <button id="btn-randomize" class="cyber-button-icon" title="Randomize">🎲</button>
-            </div>
-          </div>
-
-          <div class="control-group">
-            <label>HEAD START</label>
-            <div class="slider-wrapper">
-              <input type="range" id="head-start" min="0" max="199" value="53" class="cyber-slider">
-              <span id="head-val" class="cyber-value">53</span>
-            </div>
-          </div>
-
-          <div class="control-group">
-             <button id="btn-run" class="cyber-button primary">INITIALIZE <span class="arrow">▶</span></button>
-          </div>
-
-          <div class="stats-readout">
-            <div class="stat-item">
-              <span class="label">TOTAL SEEK</span>
-              <span id="stat-total-seek" class="value">0000</span>
-            </div>
-            <div class="stat-item">
-              <span class="label">AVG SEEK</span>
-              <span id="stat-avg-seek" class="value">00.0</span>
-            </div>
-          </div>
-        </aside>
-
-        <section class="viz-container">
-          <div class="viz-panel glass-panel">
-             <div class="viz-controls">
-                <button id="btn-play" class="cyber-mini-btn">▶</button>
-                <button id="btn-pause" class="cyber-mini-btn">⏸</button>
-                <button id="btn-stop" class="cyber-mini-btn">⏹</button>
-                <input type="range" id="sim-speed" min="1" max="5" value="2" class="speed-slider">
-             </div>
-             
-             <!-- Main Timeline Graph -->
-             <div class="canvas-wrapper" id="timeline-wrapper">
-                <canvas id="timeline-canvas"></canvas>
-             </div>
-
-             <!-- Scrubbable Timeline Control -->
-             <div class="scrub-timeline-container">
-               <input type="range" id="scrubber" min="0" max="0" value="0" class="cyber-scrubber">
-             </div>
-          </div>
-
-          <div class="viz-grid">
-             <div class="glass-panel" id="disk-view-panel">
-               <h3>RADAR VIEW</h3>
-               <canvas id="disk-canvas"></canvas>
-             </div>
-             <div class="glass-panel text-readout-panel">
-                <h3>LOGS</h3>
-                <div id="log-monitor" class="log-monitor">
-                   <div class="log-line">> SYSTEM READY...</div>
-                </div>
-             </div>
-          </div>
-        </section>
-      </main>
-
-      <div id="education-overlay" class="overlay hidden">
-         <!-- Populated via JS -->
       </div>
+    </header>
+
+    <main class="main-interface">
+      <aside class="control-panel glass-panel">
+        <h2>// CONTROL MATRIX</h2>
+
+        <div class="control-group">
+          <label>ALGORITHM</label>
+          <select id="algo-select" class="cyber-select">
+            <option value="FCFS">FCFS // FIRST-COME</option>
+            <option value="SSTF">SSTF // SHORTEST-SEEK</option>
+            <option value="SCAN">SCAN // ELEVATOR</option>
+            <option value="LOOK">LOOK // ADAPTIVE</option>
+            <option value="CSCAN">C-SCAN // CIRCULAR</option>
+            <option value="CLOOK">C-LOOK // ADPT-CIRC</option>
+            <option value="NSTEPSCAN">N-STEP SCAN // BATCHED</option>
+            <option value="FSCAN">F-SCAN // TWO-QUEUE</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label>REQUEST QUEUE</label>
+          <div class="input-wrapper">
+            <input type="text" id="request-input" class="cyber-input" value="98, 183, 37, 122, 14, 124, 65, 67" />
+            <button id="btn-randomize" class="cyber-button-icon" title="Randomize">🎲</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>HEAD START</label>
+          <div class="slider-wrapper">
+            <input type="range" id="head-start" min="0" max="199" value="53" class="cyber-slider">
+            <span id="head-val" class="cyber-value">53</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <button id="btn-run" class="cyber-button primary">INITIALIZE <span class="arrow">▶</span></button>
+        </div>
+
+        <div class="stats-readout">
+          <div class="stat-item">
+            <span class="label">TOTAL SEEK</span>
+            <span id="stat-total-seek" class="value">0000</span>
+          </div>
+          <div class="stat-item">
+            <span class="label">AVG SEEK</span>
+            <span id="stat-avg-seek" class="value">00.0</span>
+          </div>
+        </div>
+      </aside>
+
+      <section class="viz-container">
+        <div class="viz-panel glass-panel">
+          <div class="viz-controls">
+            <button id="btn-play" class="cyber-mini-btn">▶</button>
+            <button id="btn-pause" class="cyber-mini-btn">⏸</button>
+            <button id="btn-stop" class="cyber-mini-btn">⏹</button>
+            <input type="range" id="sim-speed" min="1" max="5" value="2" class="speed-slider">
+          </div>
+
+          <!-- Main Timeline Graph -->
+          <div class="canvas-wrapper" id="timeline-wrapper">
+            <canvas id="timeline-canvas"></canvas>
+          </div>
+
+          <!-- Scrubbable Timeline Control -->
+          <div class="scrub-timeline-container">
+            <input type="range" id="scrubber" min="0" max="0" value="0" class="cyber-scrubber">
+          </div>
+        </div>
+
+        <div class="viz-grid">
+          <div class="glass-panel" id="disk-view-panel">
+            <h3>RADAR VIEW</h3>
+            <div class="canvas-wrapper">
+              <canvas id="disk-canvas"></canvas>
+            </div>
+          </div>
+          <div class="glass-panel text-readout-panel">
+            <h3>LOGS</h3>
+            <div id="log-monitor" class="log-monitor">
+              <div class="log-line">> SYSTEM READY...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="education-overlay" class="overlay hidden">
+      <!-- Populated via JS -->
     </div>
-  </body>
+  </div>
+</body>
+
 </html>

@@ -176,6 +176,18 @@ const algoInfo = {
         desc: 'Version of C-SCAN that only goes to the last request, then jumps to the first request.',
         pros: 'More efficient than C-SCAN.',
         cons: 'Implementation overhead.'
+    },
+    'NSTEPSCAN': {
+        title: 'N-Step SCAN',
+        desc: 'Divides the request queue into sub-queues of N requests. The arm processes each sub-queue one at a time using SCAN. New requests accumulate in the next sub-queue, bounding maximum wait time.',
+        pros: 'Prevents arm stickiness, bounds response time, no starvation.',
+        cons: 'Slightly lower throughput than pure SCAN when N is small.'
+    },
+    'FSCAN': {
+        title: 'F-SCAN',
+        desc: 'Uses two queues: F1 (frozen snapshot of all current requests) and F2 (new arrivals during the scan). The arm services F1 with SCAN, then F2 becomes the new F1.',
+        pros: 'Prevents arm stickiness, guarantees service of all requests in F1 before accepting new ones.',
+        cons: 'New requests must wait for a full F1 swept cycle.'
     }
 };
 

@@ -5,6 +5,8 @@ import { calculateSCAN } from '../algorithms/scan.js';
 import { calculateLOOK } from '../algorithms/look.js';
 import { calculateCSCAN } from '../algorithms/cscan.js';
 import { calculateCLOOK } from '../algorithms/clook.js';
+import { calculateNSTEPSCAN } from '../algorithms/nscan.js';
+import { calculateFSCAN } from '../algorithms/fscan.js';
 
 export class Engine {
     constructor(callbacks) {
@@ -53,6 +55,8 @@ export class Engine {
             case 'LOOK': result = calculateLOOK(requests, headStart, direction); break;
             case 'CSCAN': result = calculateCSCAN(requests, headStart, diskSize, direction); break;
             case 'CLOOK': result = calculateCLOOK(requests, headStart, direction); break;
+            case 'NSTEPSCAN': result = calculateNSTEPSCAN(requests, headStart, diskSize, direction); break;
+            case 'FSCAN': result = calculateFSCAN(requests, headStart, diskSize, direction); break;
             default: result = calculateFCFS(requests, headStart);
         }
 
