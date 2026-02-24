@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "../scheduler/scheduler.h"
 
 int fcfs(int head, int arr[], int n) {
     int totalSeek = 0;

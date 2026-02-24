@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <limits.h>
+#include "../scheduler/scheduler.h"
 
 int sstf(int head, int arr[], int n) {
     int totalSeek = 0;

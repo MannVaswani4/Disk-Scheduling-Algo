@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "../scheduler/scheduler.h"
 
 int compare(const void *a, const void *b);
 
