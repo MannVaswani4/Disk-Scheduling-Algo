@@ -1,4 +1,4 @@
-# Futuristic Disk Scheduling Simulator
+# Disk Scheduling Simulator
 
 A high-performance, interactive, sci-fi themed disk scheduling algorithm simulator built with **WebAssembly (C → WASM)**, Vanilla JavaScript, and Vite.
 

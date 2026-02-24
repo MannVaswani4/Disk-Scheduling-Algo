@@ -16,7 +16,7 @@ const els = {
     requestInput: document.getElementById('request-input'),
     btnRandomize: document.getElementById('btn-randomize'),
     headStart: document.getElementById('head-start'),
-    headVal: document.getElementById('head-val'),
+    headError: document.getElementById('head-error'),
     btnRun: document.getElementById('btn-run'),
     btnPlay: document.getElementById('btn-play'),
     btnPause: document.getElementById('btn-pause'),
@@ -105,11 +105,34 @@ const engine = new Engine({
 const renderer = new Renderer(els.timelineCanvas, els.diskCanvas);
 renderer.resize();
 
+// Head-start validation
+function validateHeadStart() {
+    const raw = els.headStart.value.trim();
+    const val = parseInt(raw);
+
+    if (raw === '' || isNaN(val)) {
+        els.headError.textContent = '⚠ HEAD START is required (0 – 199).';
+        els.headError.classList.remove('hidden');
+        els.headStart.classList.add('error');
+        return false;
+    }
+    if (val < 0 || val > 199) {
+        els.headError.textContent = `⚠ HEAD START must be between 0 and 199 (got ${val}).`;
+        els.headError.classList.remove('hidden');
+        els.headStart.classList.add('error');
+        return false;
+    }
+
+    // Valid
+    els.headError.classList.add('hidden');
+    els.headStart.classList.remove('error');
+    uiState.headStart = val;
+    return true;
+}
+
 // Event Listeners
-els.headStart.addEventListener('input', (e) => {
-    els.headVal.textContent = e.target.value;
-    uiState.headStart = parseInt(e.target.value);
-});
+els.headStart.addEventListener('input', validateHeadStart);
+els.headStart.addEventListener('blur', validateHeadStart);
 
 // Direction toggle buttons
 els.dirLeft.addEventListener('click', () => {
@@ -149,6 +172,10 @@ els.btnRandomize.addEventListener('click', () => {
 });
 
 els.btnRun.addEventListener('click', () => {
+    if (!validateHeadStart()) {
+        log('ERROR: Invalid HEAD START value.');
+        return;
+    }
     parseInput();
     const algo = els.algoSelect.value;
     engine.init({

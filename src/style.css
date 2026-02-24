@@ -247,6 +247,7 @@ h1 {
     opacity: 0;
     transform: translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -429,4 +430,36 @@ h1 {
   color: var(--neon-magenta);
   margin-bottom: 10px;
   border-bottom: 1px solid var(--neon-magenta);
+}
+
+/* Head Start Input */
+.head-input {
+  width: 100%;
+  -moz-appearance: textfield;
+}
+
+.head-input::-webkit-outer-spin-button,
+.head-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+/* Validation Error */
+.input-error {
+  font-size: 0.78rem;
+  color: #ff4444;
+  letter-spacing: 0.5px;
+  padding: 4px 4px 0;
+  text-shadow: 0 0 6px rgba(255, 68, 68, 0.4);
+  animation: fadeSlideIn 0.25s ease;
+}
+
+.input-error.hidden {
+  display: none;
+}
+
+.cyber-input.error {
+  border-color: #ff4444;
+  box-shadow: 0 0 10px rgba(255, 68, 68, 0.4);
 }

@@ -75,10 +75,9 @@
 
         <div class="control-group">
           <label>HEAD START</label>
-          <div class="slider-wrapper">
-            <input type="range" id="head-start" min="0" max="199" value="53" class="cyber-slider">
-            <span id="head-val" class="cyber-value">53</span>
-          </div>
+          <input type="number" id="head-start" min="0" max="199" value="53" class="cyber-input head-input"
+            placeholder="0 – 199" />
+          <div id="head-error" class="input-error hidden"></div>
         </div>
 
         <div class="control-group">
