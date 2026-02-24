@@ -1,10 +1,13 @@
 
-import { calculateFCFS } from '../algorithms/fcfs.js';
-import { calculateSSTF } from '../algorithms/sstf.js';
-import { calculateSCAN } from '../algorithms/scan.js';
-import { calculateLOOK } from '../algorithms/look.js';
-import { calculateCSCAN } from '../algorithms/cscan.js';
-import { calculateCLOOK } from '../algorithms/clook.js';
+import {
+    calculateFCFS,
+    calculateSSTF,
+    calculateSCAN,
+    calculateLOOK,
+    calculateCSCAN,
+    calculateCLOOK,
+    initWasm
+} from '../algorithms/wasm_loader.js';
 
 export class Engine {
     constructor(callbacks) {

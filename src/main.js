@@ -1,6 +1,7 @@
 
 import { Engine } from './simulation/Engine.js';
 import { Renderer } from './ui/Renderer.js';
+import { initWasm } from './algorithms/wasm_loader.js';
 import './style.css';
 
 // DOM Elements
@@ -129,15 +130,20 @@ function parseInput() {
     uiState.requests = str.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
 }
 
-// Initial Launch
-parseInput(); // load default
-engine.init({
-    requests: uiState.requests,
-    headStart: 53,
-    algorithm: 'FCFS',
-    diskSize: 200
-});
-renderer.render(engine.getRenderState());
+// Initial Launch — must wait for WASM to load
+(async () => {
+    await initWasm();
+    log('WASM MODULE LOADED.');
+
+    parseInput(); // load default
+    engine.init({
+        requests: uiState.requests,
+        headStart: 53,
+        algorithm: 'FCFS',
+        diskSize: 200
+    });
+    renderer.render(engine.getRenderState());
+})();
 
 // Educational Mode Logic
 const algoInfo = {
