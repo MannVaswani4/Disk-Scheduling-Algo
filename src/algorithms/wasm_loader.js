@@ -121,3 +121,19 @@ export function calculateCLOOK(requests, headStart, direction) {
         requests, headStart, [dir]
     );
 }
+
+export function calculateFSCAN(requests, headStart, diskSize, direction) {
+    const dir = direction === 'right' ? 1 : 0;
+    return runAlgorithm(
+        (head, n, ds, d) => wasmModule._run_fscan(head, n, d, ds),
+        requests, headStart, [diskSize, dir]
+    );
+}
+
+export function calculateNStepSCAN(requests, headStart, diskSize, direction, stepSize) {
+    const dir = direction === 'right' ? 1 : 0;
+    return runAlgorithm(
+        (head, n, ds, d, ss) => wasmModule._run_nstep_scan(head, n, d, ds, ss),
+        requests, headStart, [diskSize, dir, stepSize]
+    );
+}

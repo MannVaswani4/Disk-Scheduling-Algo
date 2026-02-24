@@ -25,10 +25,12 @@ emcc \
     "$SRC_DIR/look.c" \
     "$SRC_DIR/cscan.c" \
     "$SRC_DIR/clook.c" \
+    "$SRC_DIR/fscan.c" \
+    "$SRC_DIR/nstep_scan.c" \
     "$SRC_DIR/wasm_bridge.c" \
     -o "$OUT_DIR/scheduler.mjs" \
     -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap","getValue","setValue","HEAP32"]' \
-    -s EXPORTED_FUNCTIONS='["_get_request_buffer","_get_steps_buffer","_get_num_steps","_get_total_seek","_run_fcfs","_run_sstf","_run_scan","_run_look","_run_cscan","_run_clook","_malloc","_free"]' \
+    -s EXPORTED_FUNCTIONS='["_get_request_buffer","_get_steps_buffer","_get_num_steps","_get_total_seek","_run_fcfs","_run_sstf","_run_scan","_run_look","_run_cscan","_run_clook","_run_fscan","_run_nstep_scan","_malloc","_free"]' \
     -s ALLOW_MEMORY_GROWTH=1 \
     -s MODULARIZE=1 \
     -s EXPORT_ES6=1 \

@@ -10,6 +10,9 @@ const els = {
     directionGroup: document.getElementById('direction-group'),
     dirLeft: document.getElementById('dir-left'),
     dirRight: document.getElementById('dir-right'),
+    stepsizeGroup: document.getElementById('stepsize-group'),
+    stepSize: document.getElementById('step-size'),
+    stepSizeVal: document.getElementById('step-size-val'),
     requestInput: document.getElementById('request-input'),
     btnRandomize: document.getElementById('btn-randomize'),
     headStart: document.getElementById('head-start'),
@@ -33,16 +36,22 @@ const uiState = {
     headStart: 53,
     diskSize: 200,
     algorithm: 'FCFS',
-    direction: 'right'
+    direction: 'right',
+    stepSize: 5
 };
 
 // Algorithms that support direction
-const DIRECTIONAL_ALGOS = ['SCAN', 'LOOK', 'CSCAN', 'CLOOK'];
+const DIRECTIONAL_ALGOS = ['SCAN', 'LOOK', 'CSCAN', 'CLOOK', 'FSCAN', 'NSTEP'];
 
 function updateDirectionVisibility() {
     const algo = els.algoSelect.value;
     const show = DIRECTIONAL_ALGOS.includes(algo);
     els.directionGroup.style.display = show ? '' : 'none';
+}
+
+function updateStepSizeVisibility() {
+    const algo = els.algoSelect.value;
+    els.stepsizeGroup.style.display = algo === 'NSTEP' ? '' : 'none';
 }
 
 // Log Helper
@@ -117,9 +126,16 @@ els.dirRight.addEventListener('click', () => {
     log('Direction set: RIGHT');
 });
 
-// Show/hide direction on algorithm change
+// Show/hide direction & step-size on algorithm change
 els.algoSelect.addEventListener('change', () => {
     updateDirectionVisibility();
+    updateStepSizeVisibility();
+});
+
+// Step size slider
+els.stepSize.addEventListener('input', (e) => {
+    els.stepSizeVal.textContent = e.target.value;
+    uiState.stepSize = parseInt(e.target.value);
 });
 
 els.btnRandomize.addEventListener('click', () => {
@@ -140,12 +156,16 @@ els.btnRun.addEventListener('click', () => {
         headStart: uiState.headStart,
         algorithm: algo,
         diskSize: 200,
-        direction: uiState.direction
+        direction: uiState.direction,
+        stepSize: uiState.stepSize
     });
     engine.play();
     uiState.algorithm = algo;
     if (DIRECTIONAL_ALGOS.includes(algo)) {
         log(`Direction: ${uiState.direction.toUpperCase()}`);
+    }
+    if (algo === 'NSTEP') {
+        log(`Step Size: ${uiState.stepSize}`);
     }
 });
 
@@ -175,12 +195,14 @@ function parseInput() {
 
     parseInput(); // load default
     updateDirectionVisibility(); // set initial visibility
+    updateStepSizeVisibility(); // set initial step-size visibility
     engine.init({
         requests: uiState.requests,
         headStart: 53,
         algorithm: 'FCFS',
         diskSize: 200,
-        direction: 'right'
+        direction: 'right',
+        stepSize: 5
     });
     renderer.render(engine.getRenderState());
 })();
@@ -222,6 +244,18 @@ const algoInfo = {
         desc: 'Version of C-SCAN that only goes to the last request, then jumps to the first request.',
         pros: 'More efficient than C-SCAN.',
         cons: 'Implementation overhead.'
+    },
+    'FSCAN': {
+        title: 'FSCAN (Freeze-SCAN)',
+        desc: 'Uses two queues: the current queue is frozen and serviced with SCAN while new requests go into a second queue.',
+        pros: 'Prevents starvation, fair to new arrivals.',
+        cons: 'New requests must wait for next sweep.'
+    },
+    'NSTEP': {
+        title: 'N-Step SCAN',
+        desc: 'Divides the request queue into sub-queues of size N. Each sub-queue is processed using SCAN independently.',
+        pros: 'Balances response time, prevents starvation.',
+        cons: 'Performance depends on choice of N.'
     }
 };
 

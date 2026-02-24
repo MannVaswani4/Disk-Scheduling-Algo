@@ -232,3 +232,97 @@ void run_clook(int head, int n, int direction) {
   }
   g_num_steps = idx;
 }
+
+/* ---- FSCAN Steps ---- */
+EMSCRIPTEN_KEEPALIVE
+void run_fscan(int head, int n, int direction, int disk_size) {
+  g_total_seek = fscan(head, g_requests, n, direction, disk_size);
+
+  int sorted[MAX_REQUESTS];
+  for (int i = 0; i < n; i++)
+    sorted[i] = g_requests[i];
+  qsort(sorted, n, sizeof(int), compare);
+
+  int idx = 0;
+  g_steps_out[idx++] = head;
+
+  if (direction == 1) { /* RIGHT */
+    for (int i = 0; i < n; i++) {
+      if (sorted[i] >= head)
+        g_steps_out[idx++] = sorted[i];
+    }
+    g_steps_out[idx++] = disk_size - 1; /* end of disk */
+    for (int i = n - 1; i >= 0; i--) {
+      if (sorted[i] < head)
+        g_steps_out[idx++] = sorted[i];
+    }
+  } else { /* LEFT */
+    for (int i = n - 1; i >= 0; i--) {
+      if (sorted[i] <= head)
+        g_steps_out[idx++] = sorted[i];
+    }
+    g_steps_out[idx++] = 0; /* start of disk */
+    for (int i = 0; i < n; i++) {
+      if (sorted[i] > head)
+        g_steps_out[idx++] = sorted[i];
+    }
+  }
+  g_num_steps = idx;
+}
+
+/* ---- N-Step SCAN Steps ---- */
+EMSCRIPTEN_KEEPALIVE
+void run_nstep_scan(int head, int n, int direction, int disk_size,
+                    int step_size) {
+  g_total_seek =
+      nstep_scan(head, g_requests, n, direction, disk_size, step_size);
+
+  int idx = 0;
+  int current = head;
+  int dir = direction;
+  int cur_head = head;
+
+  if (step_size <= 0 || step_size >= n)
+    step_size = n;
+
+  g_steps_out[idx++] = head;
+
+  for (int start = 0; start < n; start += step_size) {
+    int end = start + step_size;
+    if (end > n)
+      end = n;
+    int batch_n = end - start;
+
+    int batch[MAX_REQUESTS];
+    for (int i = 0; i < batch_n; i++)
+      batch[i] = g_requests[start + i];
+    qsort(batch, batch_n, sizeof(int), compare);
+
+    if (dir == 1) { /* RIGHT */
+      for (int i = 0; i < batch_n; i++) {
+        if (batch[i] >= current)
+          g_steps_out[idx++] = batch[i];
+      }
+      g_steps_out[idx++] = disk_size - 1;
+      for (int i = batch_n - 1; i >= 0; i--) {
+        if (batch[i] < cur_head)
+          g_steps_out[idx++] = batch[i];
+      }
+    } else { /* LEFT */
+      for (int i = batch_n - 1; i >= 0; i--) {
+        if (batch[i] <= current)
+          g_steps_out[idx++] = batch[i];
+      }
+      g_steps_out[idx++] = 0;
+      for (int i = 0; i < batch_n; i++) {
+        if (batch[i] > cur_head)
+          g_steps_out[idx++] = batch[i];
+      }
+    }
+
+    current = g_steps_out[idx - 1];
+    cur_head = current;
+    dir = 1 - dir;
+  }
+  g_num_steps = idx;
+}
