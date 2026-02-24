@@ -192,6 +192,67 @@ h1 {
   box-shadow: 0 0 10px var(--neon-magenta);
 }
 
+/* Direction Toggle */
+.direction-toggle {
+  display: flex;
+  gap: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--neon-cyan);
+}
+
+.dir-btn {
+  flex: 1;
+  padding: 8px 14px;
+  background: rgba(0, 0, 0, 0.4);
+  border: none;
+  color: #888;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.dir-btn:first-child {
+  border-right: 1px solid rgba(0, 243, 255, 0.3);
+}
+
+.dir-btn:hover {
+  color: #ccc;
+  background: rgba(0, 243, 255, 0.08);
+}
+
+.dir-btn.active {
+  color: var(--neon-cyan);
+  background: rgba(0, 243, 255, 0.15);
+  text-shadow: 0 0 8px rgba(0, 243, 255, 0.5);
+}
+
+.dir-arrow {
+  font-size: 0.7rem;
+}
+
+#direction-group {
+  animation: fadeSlideIn 0.3s ease;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Visualization */
 .viz-container {
   display: grid;

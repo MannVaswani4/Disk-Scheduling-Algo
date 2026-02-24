@@ -40,9 +40,29 @@
             <option value="LOOK">LOOK // ADAPTIVE</option>
             <option value="CSCAN">C-SCAN // CIRCULAR</option>
             <option value="CLOOK">C-LOOK // ADPT-CIRC</option>
-            <option value="NSTEPSCAN">N-STEP SCAN // BATCHED</option>
-            <option value="FSCAN">F-SCAN // TWO-QUEUE</option>
+            <option value="FSCAN">FSCAN // FREEZE-SCAN</option>
+            <option value="NSTEP">N-STEP // BATCH-SCAN</option>
           </select>
+        </div>
+
+        <div class="control-group" id="direction-group" style="display: none;">
+          <label>DIRECTION</label>
+          <div class="direction-toggle">
+            <button id="dir-left" class="dir-btn" type="button">
+              <span class="dir-arrow">◀</span> LEFT
+            </button>
+            <button id="dir-right" class="dir-btn active" type="button">
+              RIGHT <span class="dir-arrow">▶</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="control-group" id="stepsize-group" style="display: none;">
+          <label>STEP SIZE (N)</label>
+          <div class="slider-wrapper">
+            <input type="range" id="step-size" min="1" max="20" value="5" class="cyber-slider">
+            <span id="step-size-val" class="cyber-value">5</span>
+          </div>
         </div>
 
         <div class="control-group">

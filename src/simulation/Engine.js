@@ -1,12 +1,15 @@
 
-import { calculateFCFS } from '../algorithms/fcfs.js';
-import { calculateSSTF } from '../algorithms/sstf.js';
-import { calculateSCAN } from '../algorithms/scan.js';
-import { calculateLOOK } from '../algorithms/look.js';
-import { calculateCSCAN } from '../algorithms/cscan.js';
-import { calculateCLOOK } from '../algorithms/clook.js';
-import { calculateNSTEPSCAN } from '../algorithms/nscan.js';
-import { calculateFSCAN } from '../algorithms/fscan.js';
+import {
+    calculateFCFS,
+    calculateSSTF,
+    calculateSCAN,
+    calculateLOOK,
+    calculateCSCAN,
+    calculateCLOOK,
+    calculateFSCAN,
+    calculateNStepSCAN,
+    initWasm
+} from '../algorithms/wasm_loader.js';
 
 export class Engine {
     constructor(callbacks) {
@@ -39,13 +42,14 @@ export class Engine {
         this.state.diskSize = config.diskSize || 200;
         this.state.direction = config.direction || 'right';
         this.state.algorithm = config.algorithm || 'FCFS';
+        this.state.stepSize = config.stepSize || 5;
 
         this.calculate();
         this.reset();
     }
 
     calculate() {
-        const { algorithm, requests, headStart, diskSize, direction } = this.state;
+        const { algorithm, requests, headStart, diskSize, direction, stepSize } = this.state;
         let result;
 
         switch (algorithm) {
@@ -55,8 +59,8 @@ export class Engine {
             case 'LOOK': result = calculateLOOK(requests, headStart, direction); break;
             case 'CSCAN': result = calculateCSCAN(requests, headStart, diskSize, direction); break;
             case 'CLOOK': result = calculateCLOOK(requests, headStart, direction); break;
-            case 'NSTEPSCAN': result = calculateNSTEPSCAN(requests, headStart, diskSize, direction); break;
             case 'FSCAN': result = calculateFSCAN(requests, headStart, diskSize, direction); break;
+            case 'NSTEP': result = calculateNStepSCAN(requests, headStart, diskSize, direction, stepSize); break;
             default: result = calculateFCFS(requests, headStart);
         }
 

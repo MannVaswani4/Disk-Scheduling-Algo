@@ -1,11 +1,18 @@
 
 import { Engine } from './simulation/Engine.js';
 import { Renderer } from './ui/Renderer.js';
+import { initWasm } from './algorithms/wasm_loader.js';
 import './style.css';
 
 // DOM Elements
 const els = {
     algoSelect: document.getElementById('algo-select'),
+    directionGroup: document.getElementById('direction-group'),
+    dirLeft: document.getElementById('dir-left'),
+    dirRight: document.getElementById('dir-right'),
+    stepsizeGroup: document.getElementById('stepsize-group'),
+    stepSize: document.getElementById('step-size'),
+    stepSizeVal: document.getElementById('step-size-val'),
     requestInput: document.getElementById('request-input'),
     btnRandomize: document.getElementById('btn-randomize'),
     headStart: document.getElementById('head-start'),
@@ -28,8 +35,24 @@ const uiState = {
     requests: [],
     headStart: 53,
     diskSize: 200,
-    algorithm: 'FCFS'
+    algorithm: 'FCFS',
+    direction: 'right',
+    stepSize: 5
 };
+
+// Algorithms that support direction
+const DIRECTIONAL_ALGOS = ['SCAN', 'LOOK', 'CSCAN', 'CLOOK', 'FSCAN', 'NSTEP'];
+
+function updateDirectionVisibility() {
+    const algo = els.algoSelect.value;
+    const show = DIRECTIONAL_ALGOS.includes(algo);
+    els.directionGroup.style.display = show ? '' : 'none';
+}
+
+function updateStepSizeVisibility() {
+    const algo = els.algoSelect.value;
+    els.stepsizeGroup.style.display = algo === 'NSTEP' ? '' : 'none';
+}
 
 // Log Helper
 function log(msg) {
@@ -88,6 +111,33 @@ els.headStart.addEventListener('input', (e) => {
     uiState.headStart = parseInt(e.target.value);
 });
 
+// Direction toggle buttons
+els.dirLeft.addEventListener('click', () => {
+    uiState.direction = 'left';
+    els.dirLeft.classList.add('active');
+    els.dirRight.classList.remove('active');
+    log('Direction set: LEFT');
+});
+
+els.dirRight.addEventListener('click', () => {
+    uiState.direction = 'right';
+    els.dirRight.classList.add('active');
+    els.dirLeft.classList.remove('active');
+    log('Direction set: RIGHT');
+});
+
+// Show/hide direction & step-size on algorithm change
+els.algoSelect.addEventListener('change', () => {
+    updateDirectionVisibility();
+    updateStepSizeVisibility();
+});
+
+// Step size slider
+els.stepSize.addEventListener('input', (e) => {
+    els.stepSizeVal.textContent = e.target.value;
+    uiState.stepSize = parseInt(e.target.value);
+});
+
 els.btnRandomize.addEventListener('click', () => {
     const count = 8 + Math.floor(Math.random() * 10);
     const reqs = [];
@@ -95,19 +145,28 @@ els.btnRandomize.addEventListener('click', () => {
         reqs.push(Math.floor(Math.random() * 199));
     }
     els.requestInput.value = reqs.join(', ');
-    log("Generatd Random Sequence");
+    log("Generated Random Sequence");
 });
 
 els.btnRun.addEventListener('click', () => {
     parseInput();
+    const algo = els.algoSelect.value;
     engine.init({
         requests: uiState.requests,
         headStart: uiState.headStart,
-        algorithm: els.algoSelect.value,
-        diskSize: 200
+        algorithm: algo,
+        diskSize: 200,
+        direction: uiState.direction,
+        stepSize: uiState.stepSize
     });
     engine.play();
-    uiState.algorithm = els.algoSelect.value;
+    uiState.algorithm = algo;
+    if (DIRECTIONAL_ALGOS.includes(algo)) {
+        log(`Direction: ${uiState.direction.toUpperCase()}`);
+    }
+    if (algo === 'NSTEP') {
+        log(`Step Size: ${uiState.stepSize}`);
+    }
 });
 
 els.btnPlay.addEventListener('click', () => engine.play());
@@ -129,15 +188,24 @@ function parseInput() {
     uiState.requests = str.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
 }
 
-// Initial Launch
-parseInput(); // load default
-engine.init({
-    requests: uiState.requests,
-    headStart: 53,
-    algorithm: 'FCFS',
-    diskSize: 200
-});
-renderer.render(engine.getRenderState());
+// Initial Launch — must wait for WASM to load
+(async () => {
+    await initWasm();
+    log('WASM MODULE LOADED.');
+
+    parseInput(); // load default
+    updateDirectionVisibility(); // set initial visibility
+    updateStepSizeVisibility(); // set initial step-size visibility
+    engine.init({
+        requests: uiState.requests,
+        headStart: 53,
+        algorithm: 'FCFS',
+        diskSize: 200,
+        direction: 'right',
+        stepSize: 5
+    });
+    renderer.render(engine.getRenderState());
+})();
 
 // Educational Mode Logic
 const algoInfo = {
@@ -177,17 +245,17 @@ const algoInfo = {
         pros: 'More efficient than C-SCAN.',
         cons: 'Implementation overhead.'
     },
-    'NSTEPSCAN': {
-        title: 'N-Step SCAN',
-        desc: 'Divides the request queue into sub-queues of N requests. The arm processes each sub-queue one at a time using SCAN. New requests accumulate in the next sub-queue, bounding maximum wait time.',
-        pros: 'Prevents arm stickiness, bounds response time, no starvation.',
-        cons: 'Slightly lower throughput than pure SCAN when N is small.'
-    },
     'FSCAN': {
-        title: 'F-SCAN',
-        desc: 'Uses two queues: F1 (frozen snapshot of all current requests) and F2 (new arrivals during the scan). The arm services F1 with SCAN, then F2 becomes the new F1.',
-        pros: 'Prevents arm stickiness, guarantees service of all requests in F1 before accepting new ones.',
-        cons: 'New requests must wait for a full F1 swept cycle.'
+        title: 'FSCAN (Freeze-SCAN)',
+        desc: 'Uses two queues: the current queue is frozen and serviced with SCAN while new requests go into a second queue.',
+        pros: 'Prevents starvation, fair to new arrivals.',
+        cons: 'New requests must wait for next sweep.'
+    },
+    'NSTEP': {
+        title: 'N-Step SCAN',
+        desc: 'Divides the request queue into sub-queues of size N. Each sub-queue is processed using SCAN independently.',
+        pros: 'Balances response time, prevents starvation.',
+        cons: 'Performance depends on choice of N.'
     }
 };
 
