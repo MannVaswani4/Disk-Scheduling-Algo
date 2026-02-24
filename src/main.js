@@ -7,6 +7,9 @@ import './style.css';
 // DOM Elements
 const els = {
     algoSelect: document.getElementById('algo-select'),
+    directionGroup: document.getElementById('direction-group'),
+    dirLeft: document.getElementById('dir-left'),
+    dirRight: document.getElementById('dir-right'),
     requestInput: document.getElementById('request-input'),
     btnRandomize: document.getElementById('btn-randomize'),
     headStart: document.getElementById('head-start'),
@@ -29,8 +32,18 @@ const uiState = {
     requests: [],
     headStart: 53,
     diskSize: 200,
-    algorithm: 'FCFS'
+    algorithm: 'FCFS',
+    direction: 'right'
 };
+
+// Algorithms that support direction
+const DIRECTIONAL_ALGOS = ['SCAN', 'LOOK', 'CSCAN', 'CLOOK'];
+
+function updateDirectionVisibility() {
+    const algo = els.algoSelect.value;
+    const show = DIRECTIONAL_ALGOS.includes(algo);
+    els.directionGroup.style.display = show ? '' : 'none';
+}
 
 // Log Helper
 function log(msg) {
@@ -89,6 +102,26 @@ els.headStart.addEventListener('input', (e) => {
     uiState.headStart = parseInt(e.target.value);
 });
 
+// Direction toggle buttons
+els.dirLeft.addEventListener('click', () => {
+    uiState.direction = 'left';
+    els.dirLeft.classList.add('active');
+    els.dirRight.classList.remove('active');
+    log('Direction set: LEFT');
+});
+
+els.dirRight.addEventListener('click', () => {
+    uiState.direction = 'right';
+    els.dirRight.classList.add('active');
+    els.dirLeft.classList.remove('active');
+    log('Direction set: RIGHT');
+});
+
+// Show/hide direction on algorithm change
+els.algoSelect.addEventListener('change', () => {
+    updateDirectionVisibility();
+});
+
 els.btnRandomize.addEventListener('click', () => {
     const count = 8 + Math.floor(Math.random() * 10);
     const reqs = [];
@@ -96,19 +129,24 @@ els.btnRandomize.addEventListener('click', () => {
         reqs.push(Math.floor(Math.random() * 199));
     }
     els.requestInput.value = reqs.join(', ');
-    log("Generatd Random Sequence");
+    log("Generated Random Sequence");
 });
 
 els.btnRun.addEventListener('click', () => {
     parseInput();
+    const algo = els.algoSelect.value;
     engine.init({
         requests: uiState.requests,
         headStart: uiState.headStart,
-        algorithm: els.algoSelect.value,
-        diskSize: 200
+        algorithm: algo,
+        diskSize: 200,
+        direction: uiState.direction
     });
     engine.play();
-    uiState.algorithm = els.algoSelect.value;
+    uiState.algorithm = algo;
+    if (DIRECTIONAL_ALGOS.includes(algo)) {
+        log(`Direction: ${uiState.direction.toUpperCase()}`);
+    }
 });
 
 els.btnPlay.addEventListener('click', () => engine.play());
@@ -136,11 +174,13 @@ function parseInput() {
     log('WASM MODULE LOADED.');
 
     parseInput(); // load default
+    updateDirectionVisibility(); // set initial visibility
     engine.init({
         requests: uiState.requests,
         headStart: 53,
         algorithm: 'FCFS',
-        diskSize: 200
+        diskSize: 200,
+        direction: 'right'
     });
     renderer.render(engine.getRenderState());
 })();
